@@ -3,10 +3,10 @@ trigger: none
 parameters:
   - name: repository_dependency
     type: string
-    default: 
+    default: something
   - name: release_target
     type: string
-    default: 
+    default: whatever
   - name: ignore_stage_failure
     type: boolean
     default: false
@@ -50,16 +50,14 @@ steps:
   inputs:
       targetType: 'inline'
       script: |
-          $variable = ""
+          $serverObjectsJson = $env:parameters_serversObjects
 
-          # Loop through each parameter of the pipeline
-          foreach ($param in $env:SYSTEM_PARMS.Split(';')) {
-              # Append each parameter to the variable
-              $variable += "$param "
+          # Parse the JSON string into PowerShell objects
+          $serverObjects = ConvertFrom-Json $serverObjectsJson
+
+          # Loop through the serverObjects and extract the server names
+          foreach ($serverObject in $serverObjects) {
+              $serverName = $serverObject.server
+              Write-Host "Server Name: $serverName"
+              # You can perform further actions with the serverName here
           }
-
-          # Trim any trailing whitespace
-          $variable = $variable.Trim()
-
-          # Output the final variable value
-          Write-Host "Pipeline Parameters: $variable"
