@@ -39,7 +39,8 @@ parameters:
         dependency: 'HOST_3DSpace1'
 
 pool:
-  vmImage: 'ubuntu-latest'
+  name: Default
+  vmImage: 'LP15-U33-DSA'
   
 steps:
 - task: PowerShell@2
