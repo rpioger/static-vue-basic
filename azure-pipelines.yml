@@ -50,7 +50,7 @@ steps:
   inputs:
       targetType: 'inline'
       script: |
-          $serverObjectsJson = $env:parameters_serversObjects
+          $serverObjectsJson = $parameters.serversObjects
 
           # Parse the JSON string into PowerShell objects
           $serverObjects = ConvertFrom-Json $serverObjectsJson
