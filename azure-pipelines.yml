@@ -38,32 +38,27 @@ parameters:
         wrap_deployment_instructions: 'true'
         dependency: 'HOST_3DSpace1'
 
+pool:
+  vmImage: 'ubuntu-latest'
+  
+steps:
+- task: PowerShell@2
+  displayName: 'query runner(s)'
+  env:
+      REPOSITORY_NAME: $(Build.Repository.Name) 
+  inputs:
+      targetType: 'inline'
+      script: |
+          $variable = ""
 
-stages:
-  - stage: 'Check_runners'
-    jobs:
-    - job: checkRunnerHealth
-      displayName: 'Check runner(s) are online'
-      pool:
-        vmImage: 'ubuntu-latest'
-      steps:
-      - task: PowerShell@2
-        displayName: 'query runner(s)'
-        env:
-            REPOSITORY_NAME: $(Build.Repository.Name) 
-        inputs:
-            targetType: 'inline'
-            script: |
-                $variable = ""
+          # Loop through each parameter of the pipeline
+          foreach ($param in $env:SYSTEM_PARMS.Split(';')) {
+              # Append each parameter to the variable
+              $variable += "$param "
+          }
 
-                # Loop through each parameter of the pipeline
-                foreach ($param in $env:SYSTEM_PARMS.Split(';')) {
-                    # Append each parameter to the variable
-                    $variable += "$param "
-                }
+          # Trim any trailing whitespace
+          $variable = $variable.Trim()
 
-                # Trim any trailing whitespace
-                $variable = $variable.Trim()
-
-                # Output the final variable value
-                Write-Host "Pipeline Parameters: $variable"
+          # Output the final variable value
+          Write-Host "Pipeline Parameters: $variable"
