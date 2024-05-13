@@ -51,7 +51,6 @@ stages:
         displayName: 'query runner(s)'
         env:
             REPOSITORY_NAME: $(Build.Repository.Name) 
-            ACCESS_TOKEN: $(GITHUB_PAT) #Note that secret are encrypted and therefore must decrypted first by mapping them to a variable
         inputs:
             targetType: 'inline'
             script: |
