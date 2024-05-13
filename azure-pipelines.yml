@@ -1,0 +1,70 @@
+trigger: none
+
+parameters:
+  - name: repository_dependency
+    type: string
+    default: 
+  - name: release_target
+    type: string
+    default: 
+  - name: ignore_stage_failure
+    type: boolean
+    default: false
+  - name: serversObjects
+    type: object
+    default:
+      - server: 'HOST_3DSpace1'
+        title: 'App Server 1'
+        deployment_tasks: 'deployAll'
+        wrap_deployment_instructions: 'true'
+      - server: 'HOST_3DSpace2'
+        title: 'App Server 2'
+        deployment_tasks: 'only_Ctrlm only_Web'
+        wrap_deployment_instructions: 'true'
+        #in_sequence: 'true'
+      - server: 'HOST_Integrations1'
+        title: 'Integration Server Apps 1'
+        deployment_tasks: 'only_Web'
+        wrap_deployment_instructions: 'true'
+        dependency: 'HOST_3DSpace1'
+      - server: 'HOST_Integrations2'
+        title: 'Integration Server Apps 2'
+        deployment_tasks: 'only_Web'
+        wrap_deployment_instructions: 'true'
+        #in_sequence: 'true'
+      - server: 'HOST_Widget'
+        title: 'Widget Host server'
+        deployment_tasks: 'only_Web deployWidget deployWidgetWeb'
+        wrap_deployment_instructions: 'true'
+        dependency: 'HOST_3DSpace1'
+
+
+stages:
+  - stage: 'Check_runners'
+    jobs:
+    - job: checkRunnerHealth
+      displayName: 'Check runner(s) are online'
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: PowerShell@2
+        displayName: 'query runner(s)'
+        env:
+            REPOSITORY_NAME: $(Build.Repository.Name) 
+            ACCESS_TOKEN: $(GITHUB_PAT) #Note that secret are encrypted and therefore must decrypted first by mapping them to a variable
+        inputs:
+            targetType: 'inline'
+            script: |
+                $variable = ""
+
+                # Loop through each parameter of the pipeline
+                foreach ($param in $env:SYSTEM_PARMS.Split(';')) {
+                    # Append each parameter to the variable
+                    $variable += "$param "
+                }
+
+                # Trim any trailing whitespace
+                $variable = $variable.Trim()
+
+                # Output the final variable value
+                Write-Host "Pipeline Parameters: $variable"
