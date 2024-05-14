@@ -61,7 +61,7 @@ steps:
           foreach ($serverObject in $serversObjects) {
               $serverName = $serverObject.server
               $serverNames += $serverName
-              Write-Host GetEnvironmentVariable("HOST_3DSpace1")
+              Write-Host [Environment]::GetEnvironmentVariable("HOST_3DSpace1")
               # You can perform further actions with the serverName here
           }
           Write-Host "Server names: $serverNames"
