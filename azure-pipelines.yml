@@ -47,8 +47,6 @@ stages:
     jobs:
     - job: checkRunnerHealth
       displayName: 'Check runner(s) are online'
-      pool:
-        vmImage: 'ubuntu-latest'
       steps:
       - task: PowerShell@2
         displayName: 'query runner(s)'
