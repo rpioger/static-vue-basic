@@ -60,7 +60,7 @@ steps:
           
           foreach ($serverObject in $serversObjects) {
               $serverName = $serverObject.server
-              $serverNames += $serverName
+              $serverNames += $Env:$serverName
               # You can perform further actions with the serverName here
           }
           Write-Host "Server names: $serverNames"
