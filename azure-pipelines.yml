@@ -51,13 +51,18 @@ steps:
   inputs:
       targetType: 'inline'
       script: |
+          # STEP 1: Loop through the parameters and extract the server names into a table
           $serverObjectsJson = ${env:SERVER_OBJECTS}
           $serversObjects = ConvertFrom-Json $serverObjectsJson
 
-          # Loop through the serversObjects and extract the server names
+          $serverNames = @()
+          $names = "azl-adln9371", "VM-U33-DSA", "unknown"
+          
           foreach ($serverObject in $serversObjects) {
               $serverName = $serverObject.server
-              Write-Host "Server Name: $serverName"
+              $serverNames += $serverName
               # You can perform further actions with the serverName here
           }
+          Write-Host "Server names: $serverNames"
+          Write-Host "names: $names"
           
