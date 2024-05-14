@@ -52,10 +52,6 @@ steps:
       script: |
           $serverObjectsJson = ${{ convertToJson(parameters.serversObjects) }}
           
-
-          foreach ($key in (Get-ChildItem env:).Name) {
-              Write-Host "$key = $($env:$key)"
-          }
           # Parse the JSON string into PowerShell objects
           $serverObjects = ConvertFrom-Json $serverObjectsJson
 
