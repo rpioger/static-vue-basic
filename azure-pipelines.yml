@@ -83,8 +83,6 @@ stages:
       - job: DeployGitHubWorkflow
         displayName: 'Deploy on ${{ environmentObject.title }}'
         continueOnError: ${{ parameters.ignore_stage_failure }}
-        pool:
-          vmImage: 'ubuntu-latest'
         steps:
         - checkout: none  # Disable automatic checkout. Here we rely on GitHub workflow to do that. This workflow is just an event dispatcher
 
