@@ -42,29 +42,66 @@ pool:
   name: Default
   vmImage: 'LP15-U33-DSA'
   
-steps:
-- task: PowerShell@2
-  displayName: 'query runner(s)'
-  env:
-      REPOSITORY_NAME: $(Build.Repository.Name) 
-      SERVER_OBJECTS: ${{ convertToJson(parameters.serversObjects) }}
-  inputs:
-      targetType: 'inline'
-      script: |
-          # STEP 1: Loop through the parameters and extract the server names into a table
-          $serverObjectsJson = ${env:SERVER_OBJECTS}
-          $serversObjects = ConvertFrom-Json $serverObjectsJson
+stages:
+  - stage: 'Check_runners'
+    jobs:
+    - job: checkRunnerHealth
+      displayName: 'Check runner(s) are online'
+      pool:
+        vmImage: 'ubuntu-latest'
+      steps:
+      - task: PowerShell@2
+        displayName: 'query runner(s)'
+        env:
+            REPOSITORY_NAME: $(Build.Repository.Name) 
+            SERVER_OBJECTS: ${{ convertToJson(parameters.serversObjects) }}
+        inputs:
+            targetType: 'inline'
+            script: |
+                # STEP 1: Loop through the parameters and extract the server names into a table
+                $serverObjectsJson = ${env:SERVER_OBJECTS}
+                $serversObjects = ConvertFrom-Json $serverObjectsJson
 
-          $serverNames = @()
-          $names = "azl-adln9371", "VM-U33-DSA", "unknown"
-          
-          foreach ($serverObject in $serversObjects) {
-              $serverName = $serverObject.server
-              $serverNames += [Environment]::GetEnvironmentVariable("$serverName")
-              
-              # You can perform further actions with the serverName here
-          }
-          
-          Write-Host "Server names: $serverNames"
-          Write-Host "names: $names"
+                $serverNames = @()
+                $names = "azl-adln9371", "VM-U33-DSA", "unknown"
+                
+                foreach ($serverObject in $serversObjects) {
+                    $serverName = $serverObject.server
+                    $serverNames += [Environment]::GetEnvironmentVariable("$serverName")
+                    
+                    # You can perform further actions with the serverName here
+                }
+                
+                Write-Host "Server names: $serverNames"
+                Write-Host "names: $names"
+
+  - ${{ each environmentObject in parameters.serversObjects }} :
+    - stage: 'Deploy_${{ environmentObject.server }}'
+      #${{ if ne(environmentObject.in_sequence, 'true') }}:
+      #  dependsOn: [] # Let's remove the implicit dependencies between stages. Each stage shall be autonomous when possible.
+      ${{ if ne(environmentObject.dependency, '') }}:
+        dependsOn: 'Deploy_${{ environmentObject.dependency }}'
+      jobs:
+      - job: DeployGitHubWorkflow
+        displayName: 'Deploy on ${{ environmentObject.title }}'
+        continueOnError: ${{ parameters.ignore_stage_failure }}
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+        - checkout: none  # Disable automatic checkout. Here we rely on GitHub workflow to do that. This workflow is just an event dispatcher
+
+
+
+        # TODO: we might need a task that will smartly identify if the server has to be shutted down, based on what is the selected 'environmentObject.deployment_tasks'
+
+
+        # TODO: if we loop, this task should be taken out of the stage, because there is no need to run it each time
+        - task: PowerShell@2
+          displayName: 'Setup runtime Environment Variables'
+          name: environment_setup
+          inputs:
+            targetType: 'inline'
+            script: |
+              Write-Host "This is a task running to deploy"
+        
           
