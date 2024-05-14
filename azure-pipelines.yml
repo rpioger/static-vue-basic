@@ -51,13 +51,5 @@ steps:
       targetType: 'inline'
       script: |
           $serverObjectsJson = ${{ convertToJson(parameters.serversObjects) }}
+          $serverObjectsJson
           
-          # Parse the JSON string into PowerShell objects
-          $serverObjects = ConvertFrom-Json $serverObjectsJson
-
-          # Loop through the serverObjects and extract the server names
-          foreach ($serverObject in $serverObjects) {
-              $serverName = $serverObject.server
-              Write-Host "Server Name: $serverName"
-              # You can perform further actions with the serverName here
-          }
