@@ -47,9 +47,10 @@ steps:
   displayName: 'query runner(s)'
   env:
       REPOSITORY_NAME: $(Build.Repository.Name) 
+      SERVER_OBJECTS: ${{ convertToJson(parameters.serversObjects) }}
   inputs:
       targetType: 'inline'
       script: |
-          $serverObjectsJson = ${{ convertToJson(parameters.serversObjects) }}
-          $serverObjectsJson
+          $serverObjectsJson = "${env:SERVER_OBJECTS}"
+          Write-Output "$serverObjectsJson"
           
