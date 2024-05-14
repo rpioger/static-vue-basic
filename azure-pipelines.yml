@@ -51,7 +51,7 @@ steps:
   inputs:
       targetType: 'inline'
       script: |
-          $serverObjectsJson = "${env:SERVER_OBJECTS}"
+          $serverObjectsJson = ${env:SERVER_OBJECTS}
           $serversObjects = ConvertFrom-Json $serversObjectsJson
 
           # Loop through the serversObjects and extract the server names
