@@ -69,35 +69,7 @@ stages:
                     
                     # You can perform further actions with the serverName here
                 }
-                
+                Write-Host "REPOSITORY_NAME: $REPOSITORY_NAME"
                 Write-Host "Server names: $serverNames"
                 Write-Host "names: $names"
-
-  - ${{ each environmentObject in parameters.serversObjects }} :
-    - stage: 'Deploy_${{ environmentObject.server }}'
-      #${{ if ne(environmentObject.in_sequence, 'true') }}:
-      #  dependsOn: [] # Let's remove the implicit dependencies between stages. Each stage shall be autonomous when possible.
-      ${{ if ne(environmentObject.dependency, '') }}:
-        dependsOn: 'Deploy_${{ environmentObject.dependency }}'
-      jobs:
-      - job: DeployGitHubWorkflow
-        displayName: 'Deploy on ${{ environmentObject.title }}'
-        continueOnError: ${{ parameters.ignore_stage_failure }}
-        steps:
-        - checkout: none  # Disable automatic checkout. Here we rely on GitHub workflow to do that. This workflow is just an event dispatcher
-
-
-
-        # TODO: we might need a task that will smartly identify if the server has to be shutted down, based on what is the selected 'environmentObject.deployment_tasks'
-
-
-        # TODO: if we loop, this task should be taken out of the stage, because there is no need to run it each time
-        - task: PowerShell@2
-          displayName: 'Setup runtime Environment Variables'
-          name: environment_setup
-          inputs:
-            targetType: 'inline'
-            script: |
-              Write-Host "This is a task running to deploy"
-        
           
