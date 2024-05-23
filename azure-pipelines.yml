@@ -69,7 +69,7 @@ stages:
                     
                     # You can perform further actions with the serverName here
                 }
-                Write-Host "REPOSITORY_NAME: $REPOSITORY_NAME"
+                Write-Host "REPOSITORY_NAME: ${env:REPOSITORY_NAME}"
                 Write-Host "Server names: $serverNames"
                 Write-Host "names: $names"
           
