@@ -43,6 +43,9 @@ parameters:
         wrap_deployment_instructions: 'true'
         dependency: 'HOST_3DSpace1'
 
+variables:
+- group: "New variable group 24-May"
+
 pool:
   name: Default
   vmImage: 'LP15-U33-DSA'
