@@ -37,6 +37,11 @@ parameters:
         deployment_tasks: 'only_Web deployWidget deployWidgetWeb'
         wrap_deployment_instructions: 'true'
         dependency: 'HOST_3DSpace1'
+      - server: 'TEST_GROUP'
+        title: 'Widget Host server'
+        deployment_tasks: 'only_Web deployWidget deployWidgetWeb'
+        wrap_deployment_instructions: 'true'
+        dependency: 'HOST_3DSpace1'
 
 pool:
   name: Default
